@@ -11,17 +11,17 @@ generator client {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  first_name    String
-  last_name     String
-  created_at    DateTime? @default(now())
-  updated_at    DateTime? @updatedAt
-  Role          Role      @default(USER)
-  walletAddress String?
-  Project       Project[]
-  Tier          Tier?     @relation(fields: [tierId], references: [id])
-  tierId        String?
+  id             String    @id @default(uuid())
+  email          String    @unique
+  first_name     String
+  last_name      String
+  created_at     DateTime? @default(now())
+  updated_at     DateTime? @updatedAt
+  Role           Role      @default(USER)
+  wallet_address String    @unique
+  projects       Project[]
+  rewards        Reward[]
+  tierId         String?
 
   @@map("users")
 }
@@ -40,38 +40,27 @@ model Project {
   owner       User      @relation(fields: [ownerId], references: [id])
   ownerId     String
   amount      Float
-  Images      Image[]
-  coverImage  String
-  Stage       Stage[]
-  Tier        Tier[]
+  funded      Float
+  backers     Int
+  images      Image[]
+  cover_image String
+  stages      Stage[]
+  rewards     Reward[]
 
   @@map("projects")
 }
 
-model Tier {
-  id          String    @id @default(uuid())
-  title       String
-  description String
-  created_at  DateTime? @default(now())
-  updated_at  DateTime? @updatedAt
-  project     Project   @relation(fields: [projectId], references: [id])
-  projectId   String
-  amount      Float
-  backers     User[]
-  Rewards     Rewards[]
-
-  @@map("tiers")
-}
-
-model Rewards {
+model Reward {
   id          String    @id @default(uuid())
   title       String
   description String
   image       String
   created_at  DateTime? @default(now())
   updated_at  DateTime? @updatedAt
-  tier        Tier      @relation(fields: [tierId], references: [id])
-  tierId      String
+  project     Project   @relation(fields: [projectId], references: [id])
+  projectId   String
+  amount      Float
+  backers     User[]
 
   @@map("rewards")
 }
@@ -97,7 +86,7 @@ model Stage {
   projectId   String
   deadline    DateTime
   amount      Float
-  StageGoals  StageGoals[]
+  stage_goals StageGoals[]
   status      StageStatus  @default(NOT_STARTED)
 
   @@map("stages")

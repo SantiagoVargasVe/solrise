@@ -1,5 +1,7 @@
 import React from "react";
 
+import prisma from "@/lib/prisma";
+
 import StatCard from "./components/StatCard";
 import HotProjectCard from "./components/HotProjectCard";
 import {
@@ -9,10 +11,12 @@ import {
 } from "@/components/ui/carousel";
 import NotSoHotCard from "./components/NotSoHotCard";
 
-const HomePage = () => {
-  const hotProjects = [1, 2, 3, 4, 5];
-
-  const closeToFund = [1, 2, 3, 4, 5, 6, 7];
+const HomePage = async () => {
+  const projects = await prisma.project.findMany({
+    include: {
+      images: true,
+    },
+  });
 
   return (
     <main className="flex flex-col items-center w-full h-full py-10 gap-y-8 px-2 md:px-32">
@@ -30,15 +34,20 @@ const HomePage = () => {
         <StatCard statType="success" />
       </section>
 
-      <section className="flex flex-col gap-y-5 w-full ">
+      <section className="flex flex-col gap-y-5 w-full">
         <h3 className="font-bold text-xl text-center">Hot Projects</h3>
 
         <Carousel className="">
           <CarouselContent>
-            {hotProjects.map((value) => {
+            {projects.slice(0, 3).map((value) => {
               return (
-                <CarouselItem className="basis-1/2" key={value}>
-                  <HotProjectCard />
+                <CarouselItem className="basis-1/2" key={value.id}>
+                  <HotProjectCard
+                    id={value.id}
+                    title={value.title}
+                    description={value.description}
+                    image={value.cover_image}
+                  />
                 </CarouselItem>
               );
             })}
@@ -50,10 +59,14 @@ const HomePage = () => {
         <h4 className="font-semibold text-lg">Close to funding</h4>
         <Carousel>
           <CarouselContent>
-            {closeToFund.map((value) => {
+            {projects.map((value) => {
               return (
-                <CarouselItem className="basis-1/3" key={value}>
-                  <NotSoHotCard />
+                <CarouselItem className="basis-1/3" key={value.id}>
+                  <NotSoHotCard
+                    id={value.id}
+                    image={value.images[2]?.url}
+                    title={value.title}
+                  />
                 </CarouselItem>
               );
             })}
@@ -65,10 +78,14 @@ const HomePage = () => {
         <h4 className="font-semibold text-lg">Recently Added</h4>
         <Carousel>
           <CarouselContent>
-            {closeToFund.map((value) => {
+            {projects.reverse().map((value) => {
               return (
-                <CarouselItem className="basis-1/3" key={value}>
-                  <NotSoHotCard />
+                <CarouselItem className="basis-1/3" key={value.id}>
+                  <NotSoHotCard
+                    id={value.id}
+                    image={value.images[3]?.url}
+                    title={value.title}
+                  />
                 </CarouselItem>
               );
             })}

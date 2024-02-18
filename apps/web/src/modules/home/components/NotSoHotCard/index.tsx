@@ -1,27 +1,29 @@
-import React from "react";
+import React, { FC } from "react";
+import Link from "next/link";
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const NotSoHotCard = () => {
+interface NotSoHotCardProps {
+  title: string;
+  image: string | undefined;
+  id: string;
+}
+
+const NotSoHotCard: FC<NotSoHotCardProps> = ({ title, image, id }) => {
   return (
-    <Card className="p-0 rounded ">
-      <CardHeader className="p-0">
-        <img src="https://dummyimage.com/400x400/3b77d9/fff" alt="project" />
-      </CardHeader>
+    <Link href={`/project/${id}`} className="w-full">
+      <Card className="p-0 rounded h-[180px] md:h-fit">
+        <CardHeader className="p-0">
+          <img src={image} alt="project" />
+        </CardHeader>
 
-      <CardContent className="p-2">
-        <CardTitle className="font-medium text-sm leading-3 text-ellipsis">
-          Project Acme
-        </CardTitle>
-      </CardContent>
-    </Card>
+        <CardContent className="p-2">
+          <CardTitle className="font-medium text-sm leading-3 text-ellipsis">
+            {title}
+          </CardTitle>
+        </CardContent>
+      </Card>
+    </Link>
   );
 };
 

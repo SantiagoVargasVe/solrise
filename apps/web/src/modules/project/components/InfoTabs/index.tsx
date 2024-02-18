@@ -11,9 +11,12 @@ import {
 
 import { formatCurrency } from "@/lib/utils";
 
+import { Stage, Reward, StageGoals } from "database";
+import { StageWithGoals } from "../..";
+
 interface InfoTabsProps {
-  stages: number[];
-  rewards: number[];
+  stages: StageWithGoals[];
+  rewards: Reward[];
 }
 
 const InfoTabs: FC<InfoTabsProps> = ({ stages, rewards }) => {
@@ -21,23 +24,32 @@ const InfoTabs: FC<InfoTabsProps> = ({ stages, rewards }) => {
     <Tabs className="flex flex-col gap-5 w-full" defaultValue="stages">
       <TabsList>
         <TabsTrigger value="stages">Stages</TabsTrigger>
-        <TabsTrigger value="rewards">Rewards</TabsTrigger>
+        <TabsTrigger disabled={rewards?.length === 0} value="rewards">
+          Rewards
+        </TabsTrigger>
       </TabsList>
 
       <TabsContent value="stages">
         <Accordion type="multiple">
           {stages.map((value) => {
             return (
-              <AccordionItem value={value.toString()} key={value}>
+              <AccordionItem value={value.id} key={value.id}>
                 <AccordionTrigger>
-                  <span>Stage {value}</span>
-                  {formatCurrency(1000 * value)}
+                  <span>Stage {value.title}</span>
+                  {formatCurrency(value.amount)}
                 </AccordionTrigger>
                 <AccordionContent className="p-4 ">
-                  <p>
-                    This is the description for stage {value}. It is a very
-                    important stage.
-                  </p>
+                  <p>{value.description}</p>
+
+                  <ul className="list-disc mt-2">
+                    {value.stage_goals.map((goal: StageGoals) => {
+                      return (
+                        <li key={goal.id} className="flex items-center gap-2">
+                          - {goal.title}
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </AccordionContent>
               </AccordionItem>
             );
@@ -48,16 +60,18 @@ const InfoTabs: FC<InfoTabsProps> = ({ stages, rewards }) => {
         <Accordion type="multiple">
           {rewards.map((value) => {
             return (
-              <AccordionItem value={value.toString()} key={value}>
+              <AccordionItem value={value.id} key={value.id}>
                 <AccordionTrigger>
-                  <span>Reward {value}</span> for &nbsp;
-                  {formatCurrency(1000 * value)}
+                  <span>Reward {value.title}</span> for &nbsp;
+                  {formatCurrency(value.amount)}
                 </AccordionTrigger>
                 <AccordionContent className="p-4 ">
-                  <p>
-                    This is the description for reward {value}. It is a very
-                    important reward.
-                  </p>
+                  <p>{value.description}</p>
+                  <img
+                    className="w-[200px] mt-5 mx-auto"
+                    src={value.image}
+                    alt="product"
+                  />
                 </AccordionContent>
               </AccordionItem>
             );

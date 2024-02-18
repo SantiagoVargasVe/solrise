@@ -20,6 +20,7 @@
     "embla-carousel-react": "8.0.0-rc22",
     "lucide-react": "^0.331.0",
     "next": "^14.0.4",
+    "database": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwind-merge": "^2.2.1",
@@ -27,6 +28,8 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.0.4",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@types/eslint": "^8.56.1",
     "@types/node": "^20.10.6",
     "@types/react": "^18.2.46",
