@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  first_name    String
+  last_name     String
+  created_at    DateTime? @default(now())
+  updated_at    DateTime? @updatedAt
+  Role          Role      @default(USER)
+  walletAddress String?
+  Project       Project[]
+  Tier          Tier?     @relation(fields: [tierId], references: [id])
+  tierId        String?
+
+  @@map("users")
+}
+
+enum Role {
+  USER
+  PROJECT_OWNER
+}
+
+model Project {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @updatedAt
+  owner       User      @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  amount      Float
+  Images      Image[]
+  coverImage  String
+  Stage       Stage[]
+  Tier        Tier[]
+
+  @@map("projects")
+}
+
+model Tier {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @updatedAt
+  project     Project   @relation(fields: [projectId], references: [id])
+  projectId   String
+  amount      Float
+  backers     User[]
+  Rewards     Rewards[]
+
+  @@map("tiers")
+}
+
+model Rewards {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  image       String
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @updatedAt
+  tier        Tier      @relation(fields: [tierId], references: [id])
+  tierId      String
+
+  @@map("rewards")
+}
+
+model Image {
+  id         String    @id @default(uuid())
+  url        String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
+  project    Project   @relation(fields: [projectId], references: [id])
+  projectId  String
+
+  @@map("images")
+}
+
+model Stage {
+  id          String       @id @default(uuid())
+  title       String
+  description String
+  created_at  DateTime?    @default(now())
+  updated_at  DateTime?    @updatedAt
+  project     Project      @relation(fields: [projectId], references: [id])
+  projectId   String
+  deadline    DateTime
+  amount      Float
+  StageGoals  StageGoals[]
+  status      StageStatus  @default(NOT_STARTED)
+
+  @@map("stages")
+}
+
+enum StageStatus {
+  IN_PROGRESS
+  COMPLETED
+  NOT_STARTED
+  FAILED
+}
+
+model StageGoals {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @updatedAt
+  stage       Stage     @relation(fields: [stageId], references: [id])
+  stageId     String
+  succeded    Boolean   @default(false)
+
+  @@map("stage_goals")
+}
